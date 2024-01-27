@@ -1,0 +1,82 @@
+﻿@page "/Quotes"
+@using DhyanTimeMachine.Data.Entity
+@using DhyanTimeMachine.Service
+@inject IQuotesService quoteService;
+
+<h3>All Quotes</h3>
+
+
+
+<RadzenDataGrid AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="4"
+                AllowSorting="true" Data="@quotes" TItem="Quotes" ColumnWidth="200px"
+                SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedQuotes>
+    <Columns>
+        
+        <RadzenDataGridColumn TItem="Quotes" Property="Quote" Title="Quote" />
+        <RadzenDataGridColumn TItem="Quotes" Property="Date" Title="Date" />
+        
+    </Columns>
+</RadzenDataGrid>
+
+<br/>
+
+
+
+
+
+
+ @if (selectedQuotes?.Any() == true)
+{
+    <h3> Selected Quote</h3>
+    <RadzenCard Style="margin-bottom: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <strong>@selectedQuotes[0].Date.ToString("d")</strong>
+            </div>
+            <div class="col-md-12">
+                @selectedQuotes[0].Quote
+            </div>
+        </div>
+    </RadzenCard>
+
+    <br />
+
+    <h3>Thoughts</h3>
+    @foreach (var comment in selectedQuotes[0].Comments)
+    {
+        <RadzenCard Style="margin-bottom: 20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>@comment.Date.ToString("d")</strong>
+                </div>
+                <div class="col-md-12">
+                    @comment.Value
+                </div>
+            </div>
+        </RadzenCard>
+    }
+}
+
+
+
+@code {
+
+    @code {
+        IEnumerable<Quotes> quotes;
+        IList<Quotes> selectedQuotes;
+
+        void ClearSelection()
+        {
+            selectedQuotes = null;
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            quotes = await quoteService.GetAsync();
+            selectedQuotes = quotes.Take(1).ToList();
+        }
+    }
+
+}

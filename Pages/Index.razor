@@ -1,0 +1,62 @@
+﻿@page "/"
+@using DhyanTimeMachine.Service
+@inject IQuotesService  quoteService; 
+<PageTitle>Index</PageTitle>
+
+<RadzenRow Gap="1rem">
+
+    <RadzenColumn>
+        <RadzenFormField Text="Quote" Variant="Variant.Flat" Style="width: 100%;">
+            <RadzenTextArea Placeholder="Enter Quote " @bind-Value="@Quote" Style="width: 100%;" />
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn>
+        
+    </RadzenColumn>
+</RadzenRow>
+
+<br />
+<RadzenRow Gap="1rem">
+    <RadzenColumn>
+        <RadzenFormField Text="Thought" Variant="Variant.Flat" Style="width: 100%;">
+            <RadzenTextArea Placeholder="Enter Thought" @bind-Value="@Thought" Style="width: 100%;" />
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn>
+
+    </RadzenColumn>
+</RadzenRow>
+            
+<br />
+<RadzenRow Gap="1rem">
+    <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+        <RadzenButton Click=@Add Text="Add" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenColumn>
+    <RadzenColumn>
+        
+    </RadzenColumn>
+</RadzenRow>
+
+
+@code
+{
+    string Quote;
+    string Thought;
+
+    private async Task Add()
+    {
+        await  quoteService.CreateAsync(new Data.Entity.Quotes()
+            {
+                Quote = Quote,
+                Date = DateTime.Now,
+                Comments = new List<Data.Entity.Comment>()
+            {
+                new Data.Entity.Comment()
+                {
+                    Value = Thought,
+                    Date = DateTime.Now
+                }
+            }
+            });
+    }
+}
