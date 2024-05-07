@@ -9,5 +9,9 @@ namespace DhyanTimeMachine.Service
         Task<List<Quotes>> GetAsync(DateTime dateTime);
 
         Task<List<Quotes>> GetAsync();
+
+        Task UpdateComments(string id,Comment quote);
+
+        Quotes GetRandomQuote();
     }
 }

@@ -1,0 +1,99 @@
+﻿@page "/luckyMe"
+@using DhyanTimeMachine.Data.Entity
+@using DhyanTimeMachine.Service
+@inject IQuotesService quoteService;
+
+<h3>Vzades's wisdom</h3>
+
+
+
+
+ @if (selectedQuotes != null)
+{
+    <h3>Lucky Quote</h3>
+    <RadzenCard Style="margin-bottom: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <strong>@selectedQuotes.Date.ToString("d")</strong>
+            </div>
+            <div class="col-md-12">
+                @selectedQuotes.Quote
+            </div>
+        </div>
+    </RadzenCard>
+
+    <br />
+
+    <h3>Thoughts</h3>
+    @foreach (var comment in selectedQuotes.Comments)
+    {
+        <RadzenCard Style="margin-bottom: 20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <strong>@comment.Date.ToString("d")</strong>
+                </div>
+                <div class="col-md-12">
+                    @comment.Value
+                </div>
+            </div>
+        </RadzenCard>
+    }
+
+    <RadzenRow Gap="1rem">
+    <RadzenColumn>
+        <RadzenFormField Text="Thought" Variant="Variant.Flat" Style="width: 100%;">
+            <RadzenTextArea Placeholder="Enter Thought" @bind-Value="@Thought" Style="width: 100%;" />
+        </RadzenFormField>
+    </RadzenColumn>
+
+    
+</RadzenRow>
+
+
+    <br />
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+            <RadzenButton IsBusy="@adding" Click=@Add Text="Add" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenColumn>
+        <RadzenColumn>
+
+        </RadzenColumn>
+    </RadzenRow>
+}
+
+
+
+@code {
+
+    @code {
+
+        Quotes selectedQuotes =null;
+        string Thought = string.Empty;
+        bool adding = false;
+
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            selectedQuotes = quoteService.GetRandomQuote();
+
+        }
+
+       
+
+        private async Task Add()
+        {
+            adding = true;
+            await quoteService.UpdateComments(selectedQuotes._id, new Comment
+            {
+                Value = Thought,
+                Date = DateTime.Now
+            });
+            adding = false;
+        }
+           
+    }
+
+}

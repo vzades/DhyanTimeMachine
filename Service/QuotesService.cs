@@ -1,7 +1,9 @@
 ﻿using DhyanTimeMachine.Data.Entity;
 using DhyanTimeMachine.Settings;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace DhyanTimeMachine.Service
 {
@@ -33,6 +35,24 @@ namespace DhyanTimeMachine.Service
         public async Task<List<Quotes>> GetAsync()
         {
             return await _quotesCollection.Find(_ => true).ToListAsync();
+        }
+
+        public Quotes GetRandomQuote()
+        {
+            var result =   _quotesCollection.AsQueryable().Sample(20);
+
+            return result.First();
+        }
+
+        public async Task UpdateComments( string  id , Comment comment)
+        {
+           
+            var filter = Builders<Quotes>.Filter.Eq("_id", ObjectId.Parse(id));
+            var update = Builders<Quotes>.Update.Push("Comments", comment);
+
+             await _quotesCollection.UpdateOneAsync(filter, update);
+
+            
         }
     }
 }

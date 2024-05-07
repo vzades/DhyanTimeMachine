@@ -10,9 +10,7 @@
             <RadzenTextArea Placeholder="Enter Quote " @bind-Value="@Quote" Style="width: 100%;" />
         </RadzenFormField>
     </RadzenColumn>
-    <RadzenColumn>
-        
-    </RadzenColumn>
+    
 </RadzenRow>
 
 <br />
@@ -22,15 +20,13 @@
             <RadzenTextArea Placeholder="Enter Thought" @bind-Value="@Thought" Style="width: 100%;" />
         </RadzenFormField>
     </RadzenColumn>
-    <RadzenColumn>
-
-    </RadzenColumn>
+    
 </RadzenRow>
             
 <br />
 <RadzenRow Gap="1rem">
     <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
-        <RadzenButton Click=@Add Text="Add" ButtonStyle="ButtonStyle.Primary" />
+        <RadzenButton IsBusy = "@adding" Click=@Add Text="Add" ButtonStyle="ButtonStyle.Primary" />
     </RadzenColumn>
     <RadzenColumn>
         
@@ -42,9 +38,11 @@
 {
     string Quote;
     string Thought;
+    bool adding = false;
 
     private async Task Add()
     {
+        adding = true;
         await  quoteService.CreateAsync(new Data.Entity.Quotes()
             {
                 Quote = Quote,
@@ -57,6 +55,11 @@
                     Date = DateTime.Now
                 }
             }
+
             });
+
+        adding = false;
+        Quote = string.Empty;
+        Thought = string.Empty;
     }
 }
